@@ -28,7 +28,7 @@
     "demo:dev": "vite demo",
     "demo:build": "vite build",
     "demo:preview": "vite preview demo",
-    "deploy": "npm run build && npm run demo:build && gh-pages -d demo-dist"
+    "deploy:manual": "npm run build && npm run demo:build && gh-pages -d demo-dist"
   },
   "keywords": [
     "token",
