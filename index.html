@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FuzzTok - デモ</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚀</text></svg>">
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 3rem;
+        }
+
+        .header h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .demo-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            overflow: hidden;
+            margin-bottom: 2rem;
+        }
+
+        .demo-header {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .demo-header h2 {
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .demo-content {
+            padding: 2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #333;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 0.75rem 2rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .results {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .result-item {
+            margin-bottom: 1rem;
+            padding: 1rem;
+            background: white;
+            border-radius: 6px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .result-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+
+        .result-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #667eea;
+        }
+
+        .breakdown {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .breakdown-item {
+            background: white;
+            padding: 1rem;
+            border-radius: 6px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .visualization {
+            background: #2d3748;
+            color: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            font-family: 'Courier New', monospace;
+            white-space: pre-line;
+            overflow-x: auto;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .feature-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: #333;
+        }
+
+        .feature-description {
+            color: #666;
+        }
+
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 3rem;
+            opacity: 0.8;
+        }
+
+        .footer a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .footer a:hover {
+            text-decoration: underline;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .header h1 {
+                font-size: 2rem;
+            }
+            
+            .demo-content {
+                padding: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>🚀 FuzzTok</h1>
+            <p>高速・軽量なファジートークン推定ライブラリ</p>
+        </header>
+
+        <div class="demo-container">
+            <div class="demo-header">
+                <h2>ライブデモ</h2>
+                <p>テキストを入力してトークン数を推定してみてください</p>
+            </div>
+            <div class="demo-content">
+                <div class="form-group">
+                    <label for="modelSelect">モデルを選択:</label>
+                    <select id="modelSelect">
+                        <option value="gpt-3.5-turbo">GPT-3.5 Turbo</option>
+                        <option value="gpt-4">GPT-4</option>
+                        <option value="claude-3-haiku">Claude 3 Haiku</option>
+                        <option value="claude-3-sonnet">Claude 3 Sonnet</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="textInput">テキストを入力:</label>
+                    <textarea id="textInput" placeholder="ここにテキストを入力してください...\n例: Hello, world! こんにちは世界！\n日本語と英語が混在したテキストでも正確に推定できます。">Hello, world! こんにちは世界！\n\n日本語と英語が混在したテキストでも、FuzzTokは正確にトークン数を推定できます。\n数字: 12345\n記号: !@#$%</textarea>
+                </div>
+                
+                <button class="btn" onclick="estimateTokens()">トークン数を推定</button>
+                
+                <div id="results" class="results" style="display: none;">
+                    <div class="result-item">
+                        <div class="result-title">推定トークン数</div>
+                        <div class="result-value" id="tokenCount">-</div>
+                    </div>
+                    
+                    <div class="breakdown" id="breakdown"></div>
+                    
+                    <div class="visualization" id="visualization"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="features">
+            <div class="feature-card">
+                <div class="feature-icon">🚀</div>
+                <div class="feature-title">高速パフォーマンス</div>
+                <div class="feature-description">速度とメモリ使用量に最適化されたアルゴリズム</div>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">🌏</div>
+                <div class="feature-title">CJKサポート</div>
+                <div class="feature-description">中国語、日本語、韓国語テキストの高度なサポート</div>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">🔧</div>
+                <div class="feature-title">柔軟なアーキテクチャ</div>
+                <div class="feature-description">依存性注入パターンによるモデル設定の柔軟性</div>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">📊</div>
+                <div class="feature-title">詳細な分析</div>
+                <div class="feature-description">文字種別の内訳と構成分析</div>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">⚡</div>
+                <div class="feature-title">バッチ処理</div>
+                <div class="feature-description">バッチ推定とストリーミングテキストのサポート</div>
+            </div>
+            
+            <div class="feature-card">
+                <div class="feature-icon">💰</div>
+                <div class="feature-title">コスト計算</div>
+                <div class="feature-description">組み込みのトークン・コスト変換ユーティリティ</div>
+            </div>
+        </div>
+
+        <footer class="footer">
+            <p>Made with ❤️ by <a href="https://github.com/Aid-On/fuzztok" target="_blank">Aid-On</a></p>
+            <p><a href="https://github.com/Aid-On/fuzztok" target="_blank">GitHub</a> | <a href="https://www.npmjs.com/package/@aid-on/fuzztok" target="_blank">NPM</a></p>
+        </footer>
+    </div>
+
+    <script type="module">
+        // モデル設定
+        const modelConfigs = {
+            'gpt-3.5-turbo': {
+                charsPerToken: 4,
+                overhead: 10,
+                cjkTokensPerChar: 1.2,
+                mixedTextMultiplier: 1.05,
+                numberTokensPerChar: 3.5,
+                symbolTokensPerChar: 2.5,
+                whitespaceHandling: 'compress'
+            },
+            'gpt-4': {
+                charsPerToken: 4,
+                overhead: 12,
+                cjkTokensPerChar: 1.3,
+                mixedTextMultiplier: 1.08,
+                numberTokensPerChar: 3.2,
+                symbolTokensPerChar: 2.3,
+                whitespaceHandling: 'compress'
+            },
+            'claude-3-haiku': {
+                charsPerToken: 3.8,
+                overhead: 8,
+                cjkTokensPerChar: 1.1,
+                mixedTextMultiplier: 1.03,
+                numberTokensPerChar: 3.8,
+                symbolTokensPerChar: 2.8,
+                whitespaceHandling: 'compress'
+            },
+            'claude-3-sonnet': {
+                charsPerToken: 3.9,
+                overhead: 9,
+                cjkTokensPerChar: 1.15,
+                mixedTextMultiplier: 1.04,
+                numberTokensPerChar: 3.6,
+                symbolTokensPerChar: 2.6,
+                whitespaceHandling: 'compress'
+            }
+        };
+
+        // FuzzTokライブラリの簡易実装（デモ用）
+        class CharacterClassifier {
+            static isCJKCharacter(char) {
+                const code = char.charCodeAt(0);
+                return (
+                    (code >= 0x2e80 && code <= 0x2eff) ||
+                    (code >= 0x3000 && code <= 0x303f) ||
+                    (code >= 0x3040 && code <= 0x309f) ||
+                    (code >= 0x30a0 && code <= 0x30ff) ||
+                    (code >= 0x3100 && code <= 0x312f) ||
+                    (code >= 0x3130 && code <= 0x318f) ||
+                    (code >= 0x3190 && code <= 0x319f) ||
+                    (code >= 0x31a0 && code <= 0x31bf) ||
+                    (code >= 0x31c0 && code <= 0x31ef) ||
+                    (code >= 0x31f0 && code <= 0x31ff) ||
+                    (code >= 0x3200 && code <= 0x32ff) ||
+                    (code >= 0x3300 && code <= 0x33ff) ||
+                    (code >= 0x3400 && code <= 0x4dbf) ||
+                    (code >= 0x4e00 && code <= 0x9fff) ||
+                    (code >= 0xa000 && code <= 0xa48f) ||
+                    (code >= 0xa490 && code <= 0xa4cf) ||
+                    (code >= 0xac00 && code <= 0xd7af) ||
+                    (code >= 0xf900 && code <= 0xfaff) ||
+                    (code >= 0xfe30 && code <= 0xfe4f) ||
+                    (code >= 0xff00 && code <= 0xffef)
+                );
+            }
+
+            static getCharacterType(char) {
+                if (this.isCJKCharacter(char)) return 'cjk';
+                if (/[a-zA-Z\u00c0-\u024f\u1e00-\u1eff]/.test(char)) return 'latin';
+                if (/[0-9\u0660-\u0669\u06f0-\u06f9]/.test(char)) return 'digit';
+                if (/\s/.test(char)) return 'whitespace';
+                return 'symbol';
+            }
+
+            static analyzeTextComposition(text) {
+                const composition = {
+                    cjk: 0,
+                    latin: 0,
+                    digits: 0,
+                    symbols: 0,
+                    whitespace: 0,
+                    total: text.length
+                };
+
+                for (const char of text) {
+                    const type = this.getCharacterType(char);
+                    if (type === 'digit') {
+                        composition.digits++;
+                    } else if (type === 'symbol') {
+                        composition.symbols++;
+                    } else {
+                        composition[type]++;
+                    }
+                }
+
+                return {
+                    ...composition,
+                    cjkRatio: composition.total > 0 ? composition.cjk / composition.total : 0
+                };
+            }
+        }
+
+        class SimpleFuzzyEstimator {
+            constructor(modelConfigs, defaultModel) {
+                this.modelConfigs = modelConfigs;
+                this.defaultModel = defaultModel;
+            }
+
+            estimateDetailed(text, modelName) {
+                const model = modelName || this.defaultModel;
+                const config = this.modelConfigs[model] || this.modelConfigs['gpt-3.5-turbo'];
+
+                if (!text) {
+                    return {
+                        tokens: config.overhead,
+                        breakdown: {
+                            cjk: 0,
+                            latin: 0,
+                            digits: 0,
+                            symbols: 0,
+                            overhead: config.overhead
+                        },
+                        textAnalysis: {
+                            totalChars: 0,
+                            cjkRatio: 0,
+                            adjustmentFactor: 1
+                        },
+                        confidence: 'high',
+                        modelUsed: model
+                    };
+                }
+
+                const composition = CharacterClassifier.analyzeTextComposition(text);
+                
+                const breakdown = {
+                    cjk: 0,
+                    latin: 0,
+                    digits: 0,
+                    symbols: 0,
+                    overhead: config.overhead
+                };
+
+                let currentType = null;
+                let currentGroup = '';
+
+                const processGroup = () => {
+                    if (!currentGroup || !currentType) return;
+
+                    switch (currentType) {
+                        case 'cjk':
+                            breakdown.cjk += currentGroup.length * config.cjkTokensPerChar;
+                            break;
+                        case 'latin':
+                            breakdown.latin += Math.ceil(currentGroup.length / config.charsPerToken);
+                            break;
+                        case 'digit':
+                            breakdown.digits += Math.ceil(currentGroup.length / (config.numberTokensPerChar || 3.5));
+                            break;
+                        case 'symbol':
+                            breakdown.symbols += Math.ceil(currentGroup.length / (config.symbolTokensPerChar || 2.5));
+                            break;
+                        case 'whitespace':
+                            if (config.whitespaceHandling === 'count') {
+                                breakdown.symbols += currentGroup.length * 0.3;
+                            }
+                            break;
+                    }
+                    currentGroup = '';
+                };
+
+                for (const char of text) {
+                    const type = CharacterClassifier.getCharacterType(char);
+                    
+                    if (type !== currentType) {
+                        processGroup();
+                        currentType = type;
+                    }
+                    currentGroup += char;
+                }
+                processGroup();
+
+                let baseTokens = Object.values(breakdown).reduce((sum, val) => sum + val, 0);
+                baseTokens *= config.mixedTextMultiplier;
+
+                const adjustmentFactor = this.calculateAdjustmentFactor(composition.cjkRatio);
+                const finalTokens = Math.ceil(baseTokens * adjustmentFactor);
+
+                const confidence = this.calculateConfidence(composition);
+
+                return {
+                    tokens: finalTokens,
+                    breakdown,
+                    textAnalysis: {
+                        totalChars: text.length,
+                        cjkRatio: composition.cjkRatio,
+                        adjustmentFactor
+                    },
+                    confidence,
+                    modelUsed: model
+                };
+            }
+
+            calculateAdjustmentFactor(cjkRatio) {
+                if (cjkRatio > 0.8) {
+                    return 0.6;
+                } else if (cjkRatio === 0) {
+                    return 1.0;
+                } else if (cjkRatio < 0.2) {
+                    return 0.7;
+                } else {
+                    return 0.7 - ((cjkRatio - 0.2) / 0.6) * 0.1;
+                }
+            }
+
+            calculateConfidence(composition) {
+                if (composition.total < 10) return 'low';
+                if (composition.cjkRatio > 0.9 || composition.cjkRatio < 0.1) return 'high';
+                if (composition.symbols / composition.total > 0.3) return 'low';
+                return 'medium';
+            }
+        }
+
+        // グローバル関数
+        window.estimateTokens = function() {
+            const textInput = document.getElementById('textInput');
+            const modelSelect = document.getElementById('modelSelect');
+            const resultsDiv = document.getElementById('results');
+            const tokenCountDiv = document.getElementById('tokenCount');
+            const breakdownDiv = document.getElementById('breakdown');
+            const visualizationDiv = document.getElementById('visualization');
+
+            const text = textInput.value;
+            const model = modelSelect.value;
+
+            if (!text.trim()) {
+                alert('テキストを入力してください');
+                return;
+            }
+
+            const estimator = new SimpleFuzzyEstimator(modelConfigs, 'gpt-3.5-turbo');
+            const result = estimator.estimateDetailed(text, model);
+
+            // 結果を表示
+            tokenCountDiv.textContent = result.tokens;
+            
+            // 内訳を表示
+            breakdownDiv.innerHTML = `
+                <div class="breakdown-item">
+                    <div class="result-title">CJK文字</div>
+                    <div class="result-value">${result.breakdown.cjk.toFixed(1)}</div>
+                </div>
+                <div class="breakdown-item">
+                    <div class="result-title">ラテン文字</div>
+                    <div class="result-value">${result.breakdown.latin.toFixed(1)}</div>
+                </div>
+                <div class="breakdown-item">
+                    <div class="result-title">数字</div>
+                    <div class="result-value">${result.breakdown.digits.toFixed(1)}</div>
+                </div>
+                <div class="breakdown-item">
+                    <div class="result-title">記号</div>
+                    <div class="result-value">${result.breakdown.symbols.toFixed(1)}</div>
+                </div>
+                <div class="breakdown-item">
+                    <div class="result-title">オーバーヘッド</div>
+                    <div class="result-value">${result.breakdown.overhead}</div>
+                </div>
+                <div class="breakdown-item">
+                    <div class="result-title">信頼度</div>
+                    <div class="result-value">${result.confidence}</div>
+                </div>
+            `;
+
+            // ビジュアル化
+            const bar = (value, max, width = 20) => {
+                const filled = Math.round((value / max) * width);
+                return '█'.repeat(filled) + '░'.repeat(width - filled);
+            };
+
+            const maxTokens = Math.max(...Object.values(result.breakdown));
+            
+            visualizationDiv.textContent = `=== トークン推定の可視化 ===
+モデル: ${result.modelUsed}
+テキスト: "${text.slice(0, 50)}${text.length > 50 ? '...' : ''}"
+総トークン数: ${result.tokens}
+信頼度: ${result.confidence}
+
+内訳:
+CJK       [${bar(result.breakdown.cjk, maxTokens)}] ${result.breakdown.cjk.toFixed(1)}
+ラテン文字 [${bar(result.breakdown.latin, maxTokens)}] ${result.breakdown.latin.toFixed(1)}
+数字      [${bar(result.breakdown.digits, maxTokens)}] ${result.breakdown.digits.toFixed(1)}
+記号      [${bar(result.breakdown.symbols, maxTokens)}] ${result.breakdown.symbols.toFixed(1)}
+オーバーヘッド [${bar(result.breakdown.overhead, maxTokens)}] ${result.breakdown.overhead}
+
+テキスト分析:
+- 総文字数: ${result.textAnalysis.totalChars}
+- CJK比率: ${(result.textAnalysis.cjkRatio * 100).toFixed(1)}%
+- 調整係数: ${result.textAnalysis.adjustmentFactor.toFixed(2)}`;
+
+            resultsDiv.style.display = 'block';
+        };
+
+        // 初期実行
+        document.addEventListener('DOMContentLoaded', function() {
+            estimateTokens();
+        });
+    </script>
+</body>
+</html>
