@@ -103,7 +103,7 @@ describe('TokenCostCalculator', () => {
 
   describe('edge cases', () => {
     class EdgeCaseCostProvider implements CostProvider {
-      getCost(model: string): { input: number; output: number } | undefined {
+      getCost(_model: string): { input: number; output: number } | undefined {
         return { input: 0, output: 0 };
       }
     }

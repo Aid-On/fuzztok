@@ -275,7 +275,7 @@ export class FuzzyTokenEstimator {
     let currentType: ReturnType<typeof CharacterClassifier.getCharacterType> | null = null;
     let currentGroup = '';
 
-    const processGroup = () => {
+    const processGroup = (): void => {
       if (!currentGroup || !currentType) return;
 
       switch (currentType) {
@@ -490,7 +490,7 @@ export class TokenCostCalculator {
  */
 export class TokenEstimationVisualizer {
   static visualize(text: string, result: EstimationResult): string {
-    const bar = (value: number, max: number, width: number = 20) => {
+    const bar = (value: number, max: number, width: number = 20): string => {
       const filled = Math.round((value / max) * width);
       return '█'.repeat(filled) + '░'.repeat(width - filled);
     };
